@@ -3,7 +3,13 @@
 chown -R monetdb:monetdb /var/monetdb5
 
 if [ ! -d "/var/monetdb5/dbfarm" ]; then
-   monetdbd create /var/monetdb5/dbfarm
+   monetdbd create /var/monetdb5/dbfarm && \
+   monetdbd set listenaddr=0.0.0.0 /var/monetdb5/dbfarm && \
+   monetdbd set port=20000 /var/monetdb5/dbfarm && \
+   monetdbd set hostname=deep7.ie-freiburg.mpg.de /var/monetdb5/dbfarm && \
+   monetdbd set embedr=true /var/monetdb5/dbfarm && \
+   monetdbd set embedpy=true /var/monetdb5/dbfarm 
+
 else
     echo "Existing dbfarm found in '/var/monetdb5/dbfarm'"
 fi
@@ -13,8 +19,6 @@ monetdbd start /var/monetdb5/dbfarm
 sleep 5
 if [ ! -d "/var/monetdb5/dbfarm/db" ]; then
     monetdb create db && \
-    monetdb set embedr=true db && \
-    monetdb set embedpy=true db && \
     monetdb release db
 else
     echo "Existing database found in '/var/monetdb5/dbfarm/db'"
